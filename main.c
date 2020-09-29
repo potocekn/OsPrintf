@@ -8,7 +8,7 @@ char *convert(unsigned int num, int base);
 
 int main()
 {
-    puts("[EXPECTED]: This is ONE string.");
+    /*puts("[EXPECTED]: This is ONE string.");
     printf("_____________________________\n");
     simple_printf("[ ACTUAL ]: This is %s string.\n", "ONE");
     printf("_____________________________\n");
@@ -35,37 +35,71 @@ int main()
 
     printf("Tests for int\n\n");
     puts("[EXPECTED]: This is forty two: 42.");
-       simple_printf("[ ACTUAL ]: This is forty two: %d.\n", 42);
+   simple_printf("[ ACTUAL ]: This is forty two: %d.\n", 42);
 
-       puts("[EXPECTED]: This is minus five: -5.");
-       simple_printf("[ ACTUAL ]: This is minus five: %d.\n", -5);
+   puts("[EXPECTED]: This is minus five: -5.");
+   simple_printf("[ ACTUAL ]: This is minus five: %d.\n", -5);
 
-       puts("[EXPECTED]: -2 -1 0 1 2.");
-       simple_printf("[ ACTUAL ]: %d %d %d %d %d.\n", -2, -1, 0, 1, 2);
+   puts("[EXPECTED]: -2 -1 0 1 2.");
+   simple_printf("[ ACTUAL ]: %d %d %d %d %d.\n", -2, -1, 0, 1, 2);
 
-       puts("[EXPECTED]: INT_MIN = -2147483648 ; INT_MAX 2147483647.");
-       simple_printf("[ ACTUAL ]: INT_MIN = %d ; INT_MAX %d.\n", INT_MIN, INT_MAX);
+   puts("[EXPECTED]: INT_MIN = -2147483648 ; INT_MAX 2147483647.");
+   simple_printf("[ ACTUAL ]: INT_MIN = %d ; INT_MAX %d.\n", INT_MIN, INT_MAX);
 
 
      printf("Tests for hex\n\n");
      puts("[EXPECTED]: This is forty two: 2a.");
-         simple_printf("[ ACTUAL ]: This is forty two: %x.\n", 42);
+	 simple_printf("[ ACTUAL ]: This is forty two: %x.\n", 42);
 
-         puts("[EXPECTED]: This is minus five: fffffffb.");
-         simple_printf("[ ACTUAL ]: This is minus five: %x.\n", -5);
+	 puts("[EXPECTED]: This is minus five: fffffffb.");
+	 simple_printf("[ ACTUAL ]: This is minus five: %x.\n", -5);
 
-         puts("[EXPECTED]: -2 -1 0 1 2.");
-         simple_printf("[ ACTUAL ]: %d %d %d %d %d.\n", -2, -1, 0, 1, 2);
+	 puts("[EXPECTED]: -2 -1 0 1 2.");
+	 simple_printf("[ ACTUAL ]: %d %d %d %d %d.\n", -2, -1, 0, 1, 2);
 
-         puts("[EXPECTED]: INT_MIN in hexa: 80000000 ; INT_MIN in hexa: 7fffffff.");
-         simple_printf("[ ACTUAL ]: INT_MIN in hexa: %x ; INT_MIN in hexa: %x.\n", 0x80000000, 0x7fffffff);
+	 puts("[EXPECTED]: INT_MIN in hexa: 80000000 ; INT_MIN in hexa: 7fffffff.");
+	 simple_printf("[ ACTUAL ]: INT_MIN in hexa: %x ; INT_MIN in hexa: %x.\n", 0x80000000, 0x7fffffff);
 
-         puts("[EXPECTED]: Capital letters: 0xABCD.");
-         simple_printf("[ ACTUAL ]: Capital letters: 0x%X.\n", 0xabcd);
+	 puts("[EXPECTED]: Capital letters: 0xABCD.");
+	 simple_printf("[ ACTUAL ]: Capital letters: 0x%X.\n", 0xabcd);
 
+	 printf("Tests for Pointers\n");
+	 int a = 42;
+	 printf("[EXPECTED]: &a = %p.\n", &a);
+	 simple_printf("[ ACTUAL ]: &a = %p.\n", &a);*/
+	int a = 42;
+	printf("Test for %s string, %c char, %x small hex, %X big hexa, %d decimal, %p pointer\n","STRING",'1',-5, -5, a, &a);
+	simple_printf("Test for %s string, %c char, %x small hex, %X big hexa, %d decimal, %p pointer","STRING",'1',-5, -5, a, &a);
     return 0;
 }
 
+
+char *convertLong(unsigned long num, int base, int low)
+{
+	static char RepresentationUpper[]= "0123456789ABCDEF";
+	static char RepresentationLower[]= "0123456789abcdef";
+	static char buffer[50];
+	char *ptr;
+
+	ptr = &buffer[49];
+	*ptr = '\0';
+
+	do
+	{
+		if (low == 1)
+		{
+			*--ptr = RepresentationLower[num%base];
+		}
+		else
+		{
+			*--ptr = RepresentationUpper[num%base];
+		}
+
+		num /= base;
+	}while(num != 0);
+
+	return(ptr);
+}
 
 char *convertNumber(unsigned int num, int base, int low)
 {
@@ -167,7 +201,17 @@ void simple_printf(const char* format, ...)
         }
         else if (*i == 'p')
         {
-
+        	unsigned long l = va_arg(arguments, unsigned long);
+        	char * s = convertLong(l,16,0);
+        	if (strlen(s) < 16)
+        	{
+        		int numberOfZerosNeeded = 16 - strlen(s);
+        		for (int i = 0; i < numberOfZerosNeeded; i++)
+        		{
+        			putchar('0');
+        		}
+        	}
+        	printString(s);
         }
 
     }
