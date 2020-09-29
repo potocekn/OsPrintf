@@ -5,6 +5,7 @@
 void simple_printf(const char* format, ...);
 char *convert(unsigned int num, int base);
 
+
 int main()
 {
     puts("[EXPECTED]: This is ONE string.");
@@ -45,13 +46,31 @@ int main()
        puts("[EXPECTED]: INT_MIN = -2147483648 ; INT_MAX 2147483647.");
        simple_printf("[ ACTUAL ]: INT_MIN = %d ; INT_MAX %d.\n", INT_MIN, INT_MAX);
 
+
+     printf("Tests for hex\n\n");
+     puts("[EXPECTED]: This is forty two: 2a.");
+         simple_printf("[ ACTUAL ]: This is forty two: %x.\n", 42);
+
+         puts("[EXPECTED]: This is minus five: fffffffb.");
+         simple_printf("[ ACTUAL ]: This is minus five: %x.\n", -5);
+
+         puts("[EXPECTED]: -2 -1 0 1 2.");
+         simple_printf("[ ACTUAL ]: %d %d %d %d %d.\n", -2, -1, 0, 1, 2);
+
+         puts("[EXPECTED]: INT_MIN in hexa: 80000000 ; INT_MIN in hexa: 7fffffff.");
+         simple_printf("[ ACTUAL ]: INT_MIN in hexa: %x ; INT_MIN in hexa: %x.\n", 0x80000000, 0x7fffffff);
+
+         puts("[EXPECTED]: Capital letters: 0xABCD.");
+         simple_printf("[ ACTUAL ]: Capital letters: 0x%X.\n", 0xabcd);
+
     return 0;
 }
 
 
-char *convert(unsigned int num, int base)
+char *convertNumber(unsigned int num, int base, int low)
 {
-	static char Representation[]= "0123456789ABCDEF";
+	static char RepresentationUpper[]= "0123456789ABCDEF";
+	static char RepresentationLower[]= "0123456789abcdef";
 	static char buffer[50];
 	char *ptr;
 
@@ -60,7 +79,15 @@ char *convert(unsigned int num, int base)
 
 	do
 	{
-		*--ptr = Representation[num%base];
+		if (low == 1)
+		{
+			*--ptr = RepresentationLower[num%base];
+		}
+		else
+		{
+			*--ptr = RepresentationUpper[num%base];
+		}
+
 		num /= base;
 	}while(num != 0);
 
@@ -90,11 +117,9 @@ void printString(char* s)
 
 void simple_printf(const char* format, ...)
 {
-    const char* formatCalloc = calloc( strlen( format) +1, 1);
-    strcpy(formatCalloc, format);
     va_list arguments;
     va_start(arguments, format);
-    for (char* i = formatCalloc; *i !='\0'; i++)
+    for (char* i = format; *i !='\0'; i++)
     {
         //while there is only ordinary char -> nothing to do -> just write the character and go to next
     	 if (*i != '%') { putchar(*i); continue; }
@@ -116,15 +141,23 @@ void simple_printf(const char* format, ...)
         		d = (-1)*d;
         	}
 
-        	char * s = convert(d,10);
+        	char * s = convertNumber(d,10,0);
         	printString(s);
 
 
         }
-        else if ((*i == 'x') || (*i == 'X'))
+        else if (*i == 'x')
         {
         	unsigned int i = va_arg(arguments, unsigned int);
+        	char * s = convertNumber(i,16,1);
+        	printString(s);
 
+        }
+        else if (*i == 'X')
+        {
+        	unsigned int i = va_arg(arguments, unsigned int);
+			char * s = convertNumber(i,16,0);
+			printString(s);
         }
         else if (*i == 's')
         {
